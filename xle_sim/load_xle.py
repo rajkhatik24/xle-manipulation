@@ -6,7 +6,8 @@ simulation_app = SimulationApp({
 
 import os
 import omni.usd
-from pxr import UsdGeom
+from pxr import UsdGeom, UsdLux, Gf
+
 
 
 # Windows path because this script executes inside Windows Isaac Python
@@ -27,6 +28,24 @@ def main():
 
     stage = omni.usd.get_context().get_stage()
 
+
+
+        # ---------------------------------------------------------
+    # Lighting
+    # ---------------------------------------------------------
+
+    # Ambient/environment lighting
+    dome_light = UsdLux.DomeLight.Define(stage, "/World/DomeLight")
+    dome_light.CreateIntensityAttr(1000.0)
+
+    # Directional light for stronger shadows / shape definition
+    distant_light = UsdLux.DistantLight.Define(stage, "/World/DistantLight")
+    distant_light.CreateIntensityAttr(3000.0)
+    distant_light.CreateAngleAttr(0.5)
+
+    # Rotate the directional light
+    light_xform = UsdGeom.Xformable(distant_light)
+    light_xform.AddRotateXYZOp().Set(Gf.Vec3f(-45.0, 30.0, 0.0))
     # Create a prim that will reference the XLe USD
     robot_prim = stage.DefinePrim("/World/XLeRobot", "Xform")
     robot_prim.GetReferences().AddReference(XLE_USD)
