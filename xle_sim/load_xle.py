@@ -1,5 +1,5 @@
 from isaacsim import SimulationApp
-
+from xle_sim.robot import load_xle
 simulation_app = SimulationApp({
     "headless": False
 })
@@ -47,8 +47,7 @@ def main():
     light_xform = UsdGeom.Xformable(distant_light)
     light_xform.AddRotateXYZOp().Set(Gf.Vec3f(-45.0, 30.0, 0.0))
     # Create a prim that will reference the XLe USD
-    robot_prim = stage.DefinePrim("/World/XLeRobot", "Xform")
-    robot_prim.GetReferences().AddReference(XLE_USD)
+    robot_prim = load_xle(stage)
 
     print("XLe reference added successfully.")
 
