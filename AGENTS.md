@@ -85,6 +85,60 @@ Do not move individual USD files without checking their references.
 
 ---
 
+## Code Organization
+
+Current responsibilities:
+
+### `xle_sim/`
+
+XLe-specific simulation functionality.
+
+- `robot.py` — reusable XLe loading functionality
+- `load_xle.py` — standalone XLe loading smoke test
+- `controllers/` — future XLe control and IK logic
+
+### `environments/`
+
+Environment/world definitions independent of the robot.
+
+- `scenes.py` — registry and resolution of Isaac environment assets
+
+Environment code should not contain XLe-specific control or loading logic.
+
+### `scripts/`
+
+Executable entry points and launch utilities.
+
+- `isaac.sh` — launch scripts using native Windows Isaac Python from WSL
+- `run_scenes.py` — compose an environment with the XLe robot
+
+### `teleop/`
+
+Human input interfaces. Future keyboard and Quest VR implementations belong
+here.
+
+### `recording/`
+
+Demonstration recording and replay infrastructure.
+
+### `tasks/`
+
+Task-specific definitions such as pick-and-place.
+
+### `training/`
+
+Model training, configuration, and dataset processing.
+
+### `inference/`
+
+Learned-policy execution.
+
+Avoid duplicating functionality between these modules. Entry-point scripts
+should primarily compose reusable modules rather than implement robot,
+environment, or controller logic themselves.
+
+---
+
 ## Current Status
 
 Working:
@@ -94,12 +148,25 @@ Working:
 - WSL -> Windows Isaac launcher
 - Isaac SimulationApp launch
 - XLe USD loading in Isaac Sim
+- Reusable XLe loader in `xle_sim/robot.py`
+- Isaac environment registry in `environments/scenes.py`
+- Scene runner in `scripts/run_scenes.py`
+- XLe successfully composed into the Isaac `simple_room` environment
 
-Current test:
+Standalone XLe test:
 
-./scripts/isaac.sh xle_sim/load_xle.py
+    ./scripts/isaac.sh xle_sim/load_xle.py
 
-This successfully loads the XLe robot in Isaac Sim.
+Scene test:
+
+    ./scripts/isaac.sh scripts/run_scenes.py --scene simple_room
+
+Current known limitation:
+
+- XLe spawn placement inside environments has not been configured yet.
+- In `simple_room`, XLe currently appears on/near the table.
+- Spawn placement is intentionally deferred and should be implemented as a
+  separate change.
 
 ---
 
