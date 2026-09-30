@@ -8,7 +8,7 @@ import argparse
 import omni.usd
 
 from environments.scenes import SCENES, get_scene_path
-
+from environments.props import add_table
 
 def main():
 
@@ -43,6 +43,10 @@ def main():
     robot = load_xle(stage)
 
     print(f"XLe added at: {robot.GetPath()}")
+
+    if args.scene == "grid":
+        add_table(stage)
+        print("Manipulation table added.")
 
     # Allow the XLe references to resolve
     for _ in range(100):
